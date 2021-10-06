@@ -1,5 +1,5 @@
 [package]
-name = "papcio-genetic-drawing-rs"
+name = "genetic-drawer-rs"
 version = "0.1.0"
 edition = "2018"
 
@@ -7,3 +7,4 @@ edition = "2018"
 
 [dependencies]
 rand = "0.8.4"
+structopt = "0.3.23"
