@@ -41,7 +41,7 @@ fn main() {
     const POPULATION_SIZE: usize = 300;
     let BEST_NUMBER: u8 = 10;
 
-    let original_bytes = fs::read(params.path).expect("Failed to read bytes");
+    let original_bytes = fs::read(params.path).expect("Failed to read file from provided path");
 
     let mut population: Vec<Vec<u8>> = Vec::with_capacity(POPULATION_SIZE);
     let mut best: Vec<Vec<u8>> = vec![vec![0; original_bytes.len()]; BEST_NUMBER as usize];
@@ -53,20 +53,23 @@ fn main() {
         scores[i].0 = i;
     }
 
+    let mut rng = rand::thread_rng();
     for i in 0..CYCLES {
-        cross(&mut population, &best);
-        mutate(&mut population, HEIGHT, WIDTH);
+        cross(&mut population, &best, &mut rng);
+        mutate(&mut population, HEIGHT, WIDTH, &mut rng);
         score(&population, &original_bytes, &mut scores);
         note_best_speciment(&population, &mut scores, &mut best);
-
         if i % params.print_rate == 0 {
-            println!("Cycle {}", i);
-            fs::write(format!("./{}/{}_best.raw", params.output, i), &best[0])
-                .expect(&format!("Failed to write best in cycle: {}", i));
+            print_best(i, &params.output, &best);
         }
     }
-    fs::write(format!("./{}/best.raw", params.output), &best[0])
-        .expect("Failed to save final result");
+    print_best(CYCLES, &params.output, &best);
+}
+
+fn print_best(i: u32, output: &str, best: &Vec<Vec<u8>>) {
+    println!("Cycle {}", i);
+    fs::write(format!("./{}/{}_best.raw", output, i), &best[0])
+        .expect(&format!("Failed to write best in cycle: {}", i));
 }
 
 fn note_best_speciment<const LENGTH: usize>(
@@ -91,13 +94,11 @@ fn note_best_speciment<const LENGTH: usize>(
     }
 }
 
-fn cross(population: &mut Vec<Vec<u8>>, best: &Vec<Vec<u8>>) {
-    let mut rng = rand::thread_rng();
-
+fn cross(population: &mut Vec<Vec<u8>>, best: &Vec<Vec<u8>>, rng: &mut ThreadRng) {
     for i in 0..population.len() {
         // let random_speciment = population.choose_mut(&mut rng).unwrap();
         let random_speciment = &mut population[i];
-        let random_best_speciment = best.choose(&mut rng).unwrap();
+        let random_best_speciment = best.choose(rng).unwrap();
 
         for i in 0..random_speciment.len() - 1 {
             random_speciment[i] = random_best_speciment[i];
@@ -105,8 +106,7 @@ fn cross(population: &mut Vec<Vec<u8>>, best: &Vec<Vec<u8>>) {
     }
 }
 
-fn mutate(population: &mut Vec<Vec<u8>>, HEIGHT: u32, WIDTH: u32) {
-    let mut rng = rand::thread_rng();
+fn mutate(population: &mut Vec<Vec<u8>>, HEIGHT: u32, WIDTH: u32, rng: &mut ThreadRng) {
     for speciment in population {
         let end_x: u32 = rng.gen_range(1..WIDTH - 1);
         let end_y: u32 = rng.gen_range(1..HEIGHT - 1);
