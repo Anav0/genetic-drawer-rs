@@ -89,7 +89,7 @@ fn note_best_speciment<const LENGTH: usize>(
         Ordering::Equal
     });
 
-    for i in 0..best.len() - 1 {
+    for i in 0..best.len() {
         best[i] = population[scores[i].0].clone();
     }
 }
@@ -100,7 +100,7 @@ fn cross(population: &mut Vec<Vec<u8>>, best: &Vec<Vec<u8>>, rng: &mut ThreadRng
         let random_speciment = &mut population[i];
         let random_best_speciment = best.choose(rng).unwrap();
 
-        for i in 0..random_speciment.len() - 1 {
+        for i in 0..random_speciment.len() {
             random_speciment[i] = random_best_speciment[i];
         }
     }
@@ -130,9 +130,9 @@ fn score<const LENGTH: usize>(
     original_bytes: &Vec<u8>,
     scores: &mut [(usize, usize); LENGTH],
 ) {
-    for j in 0..population.len() - 1 {
+    for j in 0..population.len() {
         let mut value: usize = 0;
-        for i in 0..original_bytes.len() - 1 {
+        for i in 0..original_bytes.len() {
             value += match original_bytes[i] < population[j][i] {
                 true => (population[j][i] - original_bytes[i]) as usize,
                 false => (original_bytes[i] - population[j][i]) as usize,
