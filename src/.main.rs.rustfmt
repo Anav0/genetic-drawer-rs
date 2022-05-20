@@ -93,13 +93,8 @@ fn main() {
         CYCLES = u32::MAX;
     }
 
-    let mut done = false;
-    println!("Running...");
     while window.is_open() && !window.is_key_down(Key::Escape) {
-        if done { 
-            window.update_with_buffer(&buffer, width, height).unwrap();
-            continue; 
-        }
+        println!("Running:");
         for i in 0..CYCLES {
 
             if !window.is_open() { break; }
@@ -116,16 +111,14 @@ fn main() {
             }
                 window.update_with_buffer(&buffer, width, height).unwrap();
             }
-        done = true;
-        println!("Done!");
         }
 
-        save_best(&best[0]);
+    save_best(&best[0]);
 
    }
 
-fn save_best(best: &Vec<u8>) {
-    fs::write("best.raw", best).expect("Failed to write best image to file");
+fn save_best(best: &Vec<Vec<u8>>) {
+
 }
 
 fn note_best_speciment<const LENGTH: usize> (
