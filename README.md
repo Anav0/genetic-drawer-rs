@@ -2,14 +2,6 @@
 
 CLI program for drawing 8-bit grayscale images from source.
 
-### Usage
-
-./program -p "./photo.raw" -h 640 -w 800 -c 5000
-
-### Arguments
-
-Arguments can by listed by running the program with no arguments.
-
 ### Live progress
 ![output](https://user-images.githubusercontent.com/32037658/169607433-08dd415b-1004-4808-94bd-34652b1f4b84.gif)
 
